@@ -2,6 +2,8 @@ import _ from 'lodash';
 import uuid from 'uuid/v4';
 import game from '../../game';
 import Car from '../cars/car';
+import Pedestrian from '../pedestrians/pedestrian';
+import Excavator from '../cars/excavator';
 
 class DriverGotTired {
   static EVENT_TYPE = 'driver got tired';
@@ -13,7 +15,7 @@ class DriverGotTired {
 
   constructor(unregister) {
     const cars = game.npcs
-      .filter(n => n.type === Car.TYPE)
+      .filter(n => n.type === Car.TYPE || n.type === Pedestrian.TYPE || n.type === Excavator.TYPE)
       .filter(n => n.affects.length < 1);
 
     this.id = uuid();
@@ -38,7 +40,7 @@ class DriverGotTired {
     return {
       id: this.id,
       type: DriverGotTired.EVENT_TYPE,
-      title: `Engine #${this.car.id} Driver Is Tired`,
+      title: this.car.type === Pedestrian.TYPE ? `Employee #${this.car.id} is Tired` : `Engine #${this.car.id} Driver Is Tired`,
       description: DriverGotTired.DESCRIPTION,
       level: DriverGotTired.LEVEL,
       startTime: this.startTime,
@@ -53,7 +55,7 @@ class DriverGotTired {
     this.car.affects.push({
       id: this.id,
       type: DriverGotTired.EVENT_TYPE,
-      title: `Engine #${this.car.id} Driver Is Tired`,
+      title: this.car.type === Pedestrian.TYPE ? `Employee #${this.car.id} is Tired` : `Engine #${this.car.id} Driver Is Tired`,
       description: DriverGotTired.DESCRIPTION,
       level: DriverGotTired.LEVEL,
       startTime: this.startTime,

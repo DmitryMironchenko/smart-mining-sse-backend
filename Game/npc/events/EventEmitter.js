@@ -57,6 +57,7 @@ class EventEmitter {
   }
 
   render(time) {
+    // console.log('[INFO] render events', this.events.length);
     return this.events.map(e => e.render(time));
   }
 }

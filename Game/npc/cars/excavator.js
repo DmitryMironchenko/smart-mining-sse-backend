@@ -1,110 +1,61 @@
 import _ from 'lodash';
-import route1 from './Route1.json';
-import route2 from './Route2.json';
+import route1 from './ExcavatorRoute1.json';
+import route2 from './ExcavatorRoute2.json';
 import CarBreakDownEvent from '../events/CarBreakDown';
 import DriverBloodPressureLoweredEvent from '../events/DriverBloodPressureLowered';
 import DriverGotTired from '../events/DriverGotTired';
 
 const drivers = [
   {
-    fullName: 'Jack Black',
-    photo: 'assets/driver1.jpg',
-    age: 35,
+    fullName: 'Jorge Rodriguez',
+    photo: 'assets/JorgeRodriguez.jpg',
+    age: 42,
+    fuelTankCapacity: 900,
+    fuelConsumptionPerHour: 90,
   }, {
     fullName: 'Lee Rigby',
-    photo: 'assets/driver2.jpg',
-    age: 42,
-  }, {
-    fullName: 'Craig Puffett',
-    photo: 'assets/driver3.jpg',
-    age: 29,
-  },
-  {
-    fullName: 'Jim R. Hamilton',
-    photo: 'assets/driver4.jpg',
-    age: 29,
-  },
-  {
-    fullName: 'Anthony V. Dixon',
-    photo: 'assets/driver5.jpg',
-    age: 29,
-  },
-  {
-    fullName: 'Boyd A. Richter',
-    photo: 'assets/driver6.jpg',
-    age: 29,
-  },
-  {
-    fullName: 'Paul M. Posner',
-    photo: 'assets/driver7.jpg',
-    age: 29,
-  },
-  {
-    fullName: 'Fedor I Afanasiev',
-    photo: 'assets/driver8.jpg',
-    age: 55,
+    photo: 'assets/NickolayOsipov.jpg',
+    age: 56,
+    fuelTankCapacity: 900,
+    fuelConsumptionPerHour: 90,
   },
 ];
 
 const cars = [
   {
-    image: 'assets/Cat797F.jpg',
-    label: 'Caterpillar 797F',
+    image: 'assets/HitachiEX5600-6.jpg',
+    label: 'Hitachi EX5600-6',
     fuelTankCapacity: 900,
     fuelConsumptionPerHour: 90,
   },
   {
-    image: 'assets/Cat793F.jpg',
-    label: 'Caterpillar 793F',
+    image: 'assets/KomatsuPC8000-6.jpg',
+    label: 'Komatsu PC8000-6',
     fuelTankCapacity: 700,
     fuelConsumptionPerHour: 70,
-  },
-  {
-    image: 'assets/Kom930E-5.jpg',
-    label: 'Komatsu 930E-5',
-    fuelTankCapacity: 1000,
-    fuelConsumptionPerHour: 100,
-  },
-  {
-    image: 'assets/Kamaz54115.jpg',
-    label: 'Kamaz 54115',
-    fuelTankCapacity: 200,
-    fuelConsumptionPerHour: 30,
-  },
-  {
-    image: 'assets/MBArocs.jpg',
-    label: 'MB Arocs',
-    fuelTankCapacity: 200,
-    fuelConsumptionPerHour: 25,
-  },
-  {
-    image: 'assets/Belaz7547.jpg',
-    label: 'Belaz 7547',
-    fuelTankCapacity: 600,
-    fuelConsumptionPerHour: 50,
   },
 ];
 
 const routes = {
-  'Route1': route1,
-  'Route2': route2,
+  'ExcavatorRoute1': route1,
+  'ExcavatorRoute2': route2,
   DEFAULT: route1,
 };
 
-export default class Car {
-  static TYPE = 'car';
+export default class Excavator {
+  static TYPE = 'excavator';
   static AMOUNT = 0;
 
-  constructor({ randomPosition, routeName = 'Route1' }) {
+  constructor({ randomPosition, routeName = 'ExcavatorRoute1' }) {
     this.driver = drivers[Math.floor(Math.random() * drivers.length)];
     this.car = cars[Math.floor(Math.random() * cars.length)];
     this.route = routes[routeName] || routes.DEFAULT;
 
     const index = !randomPosition ? 0 : Math.round((Math.random() * this.route.length));
     this.dTime = this.route[index].time;
-    this.type = this.constructor.TYPE;
+    this.type = Excavator.TYPE;
     this.lastRenderTime = Date.now() + this.dTime;
-    this.id = `${this.constructor.TYPE}-${++Car.AMOUNT}`;
+    this.id = `${this.constructor.TYPE}-${++Excavator.AMOUNT}`;
     this.lat = this.route[index].lat;
     this.lng = this.route[index].lng;
     this.affects = [];
@@ -143,9 +94,9 @@ export default class Car {
         this.totalIdleTime += (timestamp - this.breakStartTime);
         this.breakStartTime = 0;
       }
-      newPoint = this.route.find(point => point.time > timestamp);
+      newPoint = this.route.find(point => point.time > timestamp) || this.route[0];
       if(!newPoint) {
-        console.log('[ERROR] Car: Not found new point for route', timestamp);
+        console.log('[ERROR] Excavator: Not found new point for route', timestamp);
         return null;
       }
 
@@ -177,12 +128,12 @@ export default class Car {
     // console.log('[INFO] New Point for the car', timeSinceLastRender, newPoint);
 
     if(!newPoint) {
-      console.log('[ERROR] Car: Not found new point for route');
+      console.log('[ERROR] Excavator: Not found new point for route');
       return null;
     }
 
     return {
-      type: Car.TYPE,
+      type: Excavator.TYPE,
       ...this.car,
       id: this.id,
       title: this.title,

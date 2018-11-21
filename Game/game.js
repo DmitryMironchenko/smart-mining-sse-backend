@@ -1,6 +1,8 @@
 import _ from 'lodash';
-import Car from './npc/cars';
+import Car from './npc/cars/car';
+import Excavator from './npc/cars/excavator';
 import DangerZone from './npc/zones/DangerZone';
+import Pedestrian from './npc/pedestrians/pedestrian';
 import eventEmitter from './npc/events/EventEmitter';
 
 class Game {
@@ -15,14 +17,27 @@ class Game {
     // console.log('[INFO] Game.render ', this.npcs.length);
     const timestamp = Date.now();
 
-    const data = this.npcs.map(npc => npc.render(timestamp)).filter(i => i);
+    const data = this.npcs.map(npc => npc.render(timestamp)).filter(i => !!i);
 
     return _.flatten(data);
   }
 
-  spawnCars(amount) {
-    const newCars = _.times(amount).map(i => new Car({ randomPosition: true }));
+  spawnCars(amount, routeName) {
+    const newCars = _.times(amount).map(i => new Car({ randomPosition: true, routeName }));
     this.npcs.unshift(...newCars);
+  }
+
+  spawnExcavators() {
+    const excavator1 = new Excavator({ routeName: 'ExcavatorRoute1' });
+    const excavator2 = new Excavator({ routeName: 'ExcavatorRoute2' });
+    this.npcs.push(excavator1);
+    this.npcs.push(excavator2);
+  }
+
+  spawnPedestrians(amount = 10) {
+    _.times(amount, i => {
+      this.npcs.push(new Pedestrian({ randomRoute: true }));
+    })
   }
 
   spawnEvent(type, ...args) {

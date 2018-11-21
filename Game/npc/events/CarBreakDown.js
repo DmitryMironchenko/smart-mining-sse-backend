@@ -2,6 +2,7 @@ import _ from 'lodash';
 import uuid from 'uuid/v4';
 import game from '../../game';
 import Car from '../cars/car';
+import Excavator from '../cars/excavator';
 
 class CarBreakDownEvent {
   static EVENT_TYPE = 'car breakdown';
@@ -13,7 +14,7 @@ class CarBreakDownEvent {
 
   constructor(unregister) {
     const cars = game.npcs
-      .filter(n => n.type === Car.TYPE)
+      .filter(n => n.type === Car.TYPE || n.type === Excavator.TYPE)
       .filter(n => n.affects.length < 1);
 
     this.id = uuid();
@@ -36,7 +37,7 @@ class CarBreakDownEvent {
     return {
       id: this.id,
       type: CarBreakDownEvent.EVENT_TYPE,
-      title: `Truck #${this.car.id} has broken down`,
+      title: `Engine #${this.car.id} has broken down`,
       description: CarBreakDownEvent.DESCRIPTION,
       level: CarBreakDownEvent.LEVEL,
       startTime: this.startTime,
