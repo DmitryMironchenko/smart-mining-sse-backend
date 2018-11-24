@@ -3,12 +3,16 @@ import CarBreakDownEvent from './CarBreakDown';
 import DriverBloodPressureLowered from './DriverBloodPressureLowered';
 import DriverGotTired from './DriverGotTired';
 import ZoneRestrictionViolation from './ZoneRestrictionViolation';
+import CellTowerPowerCut from './CellTowerPowerCut';
+import CellTowerOverload from './CellTowerOverload';
 
 const eventTypes = {
-  [CarBreakDownEvent.EVENT_TYPE]: (...args) => (new CarBreakDownEvent(...args)),
-  [DriverBloodPressureLowered.EVENT_TYPE]: (...args) => (new DriverBloodPressureLowered(...args)),
-  [DriverGotTired.EVENT_TYPE]: (...args) => (new DriverGotTired(...args)),
-  [ZoneRestrictionViolation.EVENT_TYPE]: (...args) => (new ZoneRestrictionViolation(...args)),
+  //[CarBreakDownEvent.EVENT_TYPE]: (...args) => (new CarBreakDownEvent(...args)),
+  //[DriverBloodPressureLowered.EVENT_TYPE]: (...args) => (new DriverBloodPressureLowered(...args)),
+  //[DriverGotTired.EVENT_TYPE]: (...args) => (new DriverGotTired(...args)),
+  //[ZoneRestrictionViolation.EVENT_TYPE]: (...args) => (new ZoneRestrictionViolation(...args)),
+  [CellTowerPowerCut.EVENT_TYPE]: (...args) => (new CellTowerPowerCut(...args)),
+  [CellTowerOverload.EVENT_TYPE]: (...args) => (new CellTowerOverload(...args)),
 };
 
 let randomEventsInterval = null;
@@ -44,10 +48,8 @@ class EventEmitter {
     const randomType = types[Math.floor((types.length) * Math.random())];
     // console.log('[INFO] _spawnRandomEvent', randomType);
 
-    this.spawnEvent(randomType);
-
     setTimeout(() => {
-      this._spawnRandomEventInfinitely(minInterval, maxInterval);
+      this.spawnEvent(randomType);
     }, minInterval + Math.round(Math.random() * (maxInterval - minInterval)));
   }
 

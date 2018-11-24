@@ -4,6 +4,8 @@ import Excavator from './npc/cars/excavator';
 import DangerZone from './npc/zones/DangerZone';
 import Pedestrian from './npc/pedestrians/pedestrian';
 import eventEmitter from './npc/events/EventEmitter';
+import CellTower from './npc/static/CellTower';
+import SmallCell from './npc/static/SmallCell';
 
 class Game {
   constructor() {
@@ -46,6 +48,14 @@ class Game {
 
   startSpawningRandomEvents(...args) {
     eventEmitter.startSpawningRandomEvents(...args);
+  }
+
+  spawnCellTowers() {
+    this.npcs.unshift(...CellTower.spawn());
+  }
+
+  spawnSmallCells() {
+    this.npcs.unshift(...SmallCell.spawn());
   }
 }
 

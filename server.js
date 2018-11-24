@@ -1,16 +1,20 @@
 import express from 'express';
 
 import game from './Game/game';
+import CellTowerPowerCut from './Game/npc/events/CellTowerPowerCut';
 
 const app = express();
 
-const GAME_REFRESH_RATE = 100;
-game.spawnCars(30, 'Route1');
-game.spawnCars(30, 'Route2');
-game.spawnExcavators();
-game.spawnPedestrians(100);
-game.startSpawningRandomEvents(30e3);
-// setTimeout(() => { game.spawnEvent('driver blood pressure is not normal'); }, 5e3);
+const GAME_REFRESH_RATE = 500;
+// game.spawnCars(30, 'Route1');
+// game.spawnCars(30, 'Route2');
+// game.spawnExcavators();
+// game.spawnPedestrians(100);
+game.spawnCellTowers();
+game.spawnSmallCells();
+
+game.startSpawningRandomEvents(20e3);
+// setTimeout(() => { game.spawnEvent(CellTowerPowerCut.EVENT_TYPE); }, 5e3);
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
