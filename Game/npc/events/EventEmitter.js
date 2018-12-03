@@ -1,54 +1,72 @@
 import _ from 'lodash';
-import CarBreakDownEvent from './CarBreakDown';
-import DriverBloodPressureLowered from './DriverBloodPressureLowered';
-import DriverGotTired from './DriverGotTired';
-import ZoneRestrictionViolation from './ZoneRestrictionViolation';
+import CowLostConnection from './CowLostConnection';
+import WaterPointEmpty from './WaterPointEmpty';
+import CowEmergency from './CowEmergency';
+import ZoneRestriction from './ZoneRestrictionViolation';
+import CowRunner from './CowRunner';
 
-const eventTypes = {
-  [CarBreakDownEvent.EVENT_TYPE]: (...args) => (new CarBreakDownEvent(...args)),
-  [DriverBloodPressureLowered.EVENT_TYPE]: (...args) => (new DriverBloodPressureLowered(...args)),
-  [DriverGotTired.EVENT_TYPE]: (...args) => (new DriverGotTired(...args)),
-  [ZoneRestrictionViolation.EVENT_TYPE]: (...args) => (new ZoneRestrictionViolation(...args)),
+export const eventTypes = {
+  [CowRunner.EVENT_TYPE]: {
+    event: (...args) => (new CowRunner(...args)),
+    minPeriod: 55e3,
+    maxPeriod: 70e3,
+  },
+  [ZoneRestriction.EVENT_TYPE]: {
+    event: (...args) => (new ZoneRestriction(...args)),
+    minPeriod: 1000e3,
+    maxPeriod: 1000e3,
+  },
+  [CowLostConnection.EVENT_TYPE]: {
+    event: (...args) => (new CowLostConnection(...args)),
+    minPeriod: 13e3,
+    maxPeriod: 30e3,
+  },
+  [CowEmergency.EVENT_TYPE]: {
+    event: (...args) => (new CowEmergency(...args)),
+    minPeriod: 31e3,
+    maxPeriod: 40e3,
+  },
+  [WaterPointEmpty.EVENT_TYPE]: {
+    event: (...args) => (new WaterPointEmpty(...args)),
+    minPeriod: 48e3,
+    maxPeriod: 47e3,
+  },
 };
-
-let randomEventsInterval = null;
 
 class EventEmitter {
   events = [];
+  eventsHandlers = [];
 
   spawnEvent(type, ...args) {
-    // console.log('[INFO] spawnEvent', type);
-    const event = eventTypes[type](this.unregisterEvent.bind(this), ...args);
+    const event = type.event(this.unregisterEvent.bind(this), ...args);
     if (!event.error){
       this.events.push(event);
     } else {
-      // console.error(`[ERROR] failed to spawn event ${event.constructor.EVENT_TYPE}`, event.error);
+      console.error(`[ERROR] failed to spawn event ${event.constructor.EVENT_TYPE}`, event.error);
     }
   }
 
-  startSpawningRandomEvents(interval = 30e3) {
-    // console.log('[INFO] startSpawningRandomEvents');
-    randomEventsInterval = setInterval(() => {
-      this._spawnRandomEventInfinitely(30e3, 180e3);
-    }, interval);
+  startSpawningEvents() {
+    for (let type in eventTypes) {
+      if (eventTypes.hasOwnProperty(type)) {
+        this.eventsHandlers.push =
+          this._spawnEventInfinitely(eventTypes[type]);
+      }
+    }
   }
 
   stopSpawningRandomEvents() {
-    clearInterval(randomEventsInterval);
-    randomEventsInterval = null;
+    this.eventsHandlers.map(event => {
+      clearTimeout(event);
+    });
+    this.eventsHandlers = [];
   }
 
-  _spawnRandomEventInfinitely(minInterval, maxInterval) {
-    // console.log('[INFO] _spawnRandomEvent');
-    const types = _.keys(eventTypes);
-    const randomType = types[Math.floor((types.length) * Math.random())];
-    // console.log('[INFO] _spawnRandomEvent', randomType);
-
-    this.spawnEvent(randomType);
-
-    setTimeout(() => {
-      this._spawnRandomEventInfinitely(minInterval, maxInterval);
-    }, minInterval + Math.round(Math.random() * (maxInterval - minInterval)));
+  _spawnEventInfinitely(type, period=type.minPeriod) {
+    return setTimeout(() => {
+      this.spawnEvent(type);
+      this._spawnEventInfinitely(type, type.maxPeriod);
+    }, period);
   }
 
   unregisterEvent(event) {
@@ -57,8 +75,11 @@ class EventEmitter {
   }
 
   render(time) {
-    // console.log('[INFO] render events', this.events.length);
-    return this.events.map(e => e.render(time));
+    return this.events.map(event => {
+      if(_.isFunction(event.render)){
+        return event.render(time)
+      }
+    });
   }
 }
 

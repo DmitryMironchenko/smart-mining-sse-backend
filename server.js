@@ -1,17 +1,21 @@
 import express from 'express';
-
 import game from './Game/game';
 
+let clientId = 0;
+let clients = []; // <- Keep a map of attached clients
+const template = `<!DOCTYPE html> 
+<html> 
+  <body>
+    <script type="text/javascript">
+      var source = new EventSource('/events/');
+      source.onmessage = function(e) {
+          document.body.innerHTML += e.data + "<br />";
+      };
+    </script> 
+  </body> 
+</html>`;
+
 const app = express();
-
-const GAME_REFRESH_RATE = 100;
-game.spawnCars(30, 'Route1');
-game.spawnCars(30, 'Route2');
-game.spawnExcavators();
-game.spawnPedestrians(100);
-game.startSpawningRandomEvents(30e3);
-// setTimeout(() => { game.spawnEvent('driver blood pressure is not normal'); }, 5e3);
-
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -19,22 +23,9 @@ app.use(function (req, res, next) {
   next();
 });
 
-const template = `
-<!DOCTYPE html> <html> <body>
-	<script type="text/javascript">
-		    var source = new EventSource('/events/');
-		    source.onmessage = function(e) {
-		        document.body.innerHTML += e.data + "<br />";
-		    };
-</script> </body> </html>`;
-
 app.get('/', (req, res) => {
   res.send(template);
 });
-
-var clientId = 0;
-var clients = {}; // <- Keep a map of attached clients
-
 app.get('/events', (req, res) => {
   req.socket.setTimeout(Number.MAX_VALUE);
 
@@ -52,10 +43,17 @@ app.get('/events', (req, res) => {
     }); // <- Remove this client when he disconnects
   })(++clientId)
 });
+// start the server
+app.listen(3001, () => {
+  console.log("+++ Express Server is Running");
+});
 
-setInterval(function () {
-  // console.log("Clients: " + Object.keys(clients));
+const GAME_REFRESH_RATE = 2500;
+game.spawnWaterPoint(1);
+game.spawnCows(5);
+game.startSpawningRandomEvents(30e2);
 
+setInterval(() => {
   let data = null;
   if (true || Object.keys(clients).length) {
     data = game.render();
@@ -63,10 +61,7 @@ setInterval(function () {
 
   for (clientId in clients) {
     clients[clientId].write(`data: ${JSON.stringify(data)}\n\n`); // <- Push a message to a single attached client
-  };
+  }
 }, GAME_REFRESH_RATE);
 
-// start the server
-app.listen(3001, () => {
-  console.log("+++ Express Server is Running");
-});
+

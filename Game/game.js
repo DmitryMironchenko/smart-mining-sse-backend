@@ -1,43 +1,30 @@
 import _ from 'lodash';
-import Car from './npc/cars/car';
-import Excavator from './npc/cars/excavator';
-import DangerZone from './npc/zones/DangerZone';
-import Pedestrian from './npc/pedestrians/pedestrian';
+import Cow from './npc/cows/cow';
+import WaterPoint from './npc/cow-water-point/cow-water-point';
 import eventEmitter from './npc/events/EventEmitter';
+import zone from './npc/zones/DangerZone';
 
 class Game {
   constructor() {
-    this.npcs = [
-      eventEmitter,
-      new DangerZone(),
-    ];
+    this.npcs = [eventEmitter, new zone()];
   }
 
-  render(time) {
-    // console.log('[INFO] Game.render ', this.npcs.length);
+  render() {
     const timestamp = Date.now();
+    const data = this.npcs.map(
+      npc => npc.render(timestamp));
 
-    const data = this.npcs.map(npc => npc.render(timestamp)).filter(i => !!i);
-
-    return _.flatten(data);
+    return _.flatten(data).filter(i => (i !== null));
   }
 
-  spawnCars(amount, routeName) {
-    const newCars = _.times(amount).map(i => new Car({ randomPosition: true, routeName }));
-    this.npcs.unshift(...newCars);
+  spawnCows(amount) {
+    const newCows = _.times(amount).map(() => new Cow());
+    this.npcs.unshift(...newCows);
   }
 
-  spawnExcavators() {
-    const excavator1 = new Excavator({ routeName: 'ExcavatorRoute1' });
-    const excavator2 = new Excavator({ routeName: 'ExcavatorRoute2' });
-    this.npcs.push(excavator1);
-    this.npcs.push(excavator2);
-  }
-
-  spawnPedestrians(amount = 10) {
-    _.times(amount, i => {
-      this.npcs.push(new Pedestrian({ randomRoute: true }));
-    })
+  spawnWaterPoint(amount) {
+    const newWaterPoints = _.times(amount).map(i => new WaterPoint());
+    this.npcs.unshift(...newWaterPoints);
   }
 
   spawnEvent(type, ...args) {
@@ -45,7 +32,7 @@ class Game {
   }
 
   startSpawningRandomEvents(...args) {
-    eventEmitter.startSpawningRandomEvents(...args);
+    eventEmitter.startSpawningEvents(...args);
   }
 }
 

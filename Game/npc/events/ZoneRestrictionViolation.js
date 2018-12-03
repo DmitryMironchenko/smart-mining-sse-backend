@@ -1,21 +1,17 @@
 import uuid from 'uuid/v4';
 import game from '../../game';
-import Car from '../cars/car';
+import Cow from '../cows/cow';
 
 class ZoneRestrictionViolation {
   static EVENT_TYPE = 'unit violates zone restrictions';
-  static TITLE = 'Car speeding in danger zone';
-  static DESCRIPTION = `Car speeding in danger zone`;
+  static TITLE = 'Cow run out';
+  static DESCRIPTION = `Cow-1 run out from the restriction zone.`;
   static LEVEL = 'WARNING';
   static DURATION = 5e3;
 
-  constructor(unregister, car) {
-    const cars = game.npcs
-      .filter(n => n.type === Car.TYPE)
-      .filter(n => n.affects.length < 1);
-
+  constructor(unregister, cow) {
     this.id = uuid();
-    this.car = car;
+    this.cow = cow;
     this.unregister = unregister;
 
     setTimeout(() => {
@@ -24,14 +20,16 @@ class ZoneRestrictionViolation {
   }
 
   render(time) {
-    if(this.car) {
+    if(this.cow) {
       return {
         id: this.id,
+        showAlert: true,
+        status: 'CRITICAL',
         type: ZoneRestrictionViolation.EVENT_TYPE,
-        title: `Engine #${this.car.id} is violating zone restriction`,
+        title: `Engine #${this.cow.id} is violating zone restriction`,
         description: ZoneRestrictionViolation.DESCRIPTION,
         level: ZoneRestrictionViolation.LEVEL,
-        carId: this.car.id,
+        cowId: this.cow.id,
       };
     }
     this.unregister(this);
