@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import fs from 'fs-extra';
+// import fs from 'fs-extra';
 import rawRoute from './Game/npc/pedestrians/PedestrianRoute4.json';
 
 export const fixRoute = (route, pointsAmount) => {
@@ -30,4 +30,4 @@ export const fixRoute = (route, pointsAmount) => {
   return fixedStuff;
 };
 
-fs.writeJSON('./Game/npc/pedestrians/PedestrianRoute4-fixed.json', fixRoute(rawRoute, 30));
+// fs.writeJSON('./Game/npc/pedestrians/PedestrianRoute4-fixed.json', fixRoute(rawRoute, 30));
