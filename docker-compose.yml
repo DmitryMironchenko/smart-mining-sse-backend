@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+
+  node:
+    build: .
+    image: smart-mining-sse-backend
+    ports:
+      - 3000:3001
+    volumes:
+      - ./app:/app
