@@ -5,8 +5,8 @@ import game from './Game/game';
 const app = express();
 
 const GAME_REFRESH_RATE = 100;
-game.spawnCars(30, 'Route1');
-game.spawnCars(30, 'Route2');
+game.spawnCars(5, 'Route1');
+game.spawnCars(5, 'Route2');
 game.spawnExcavators();
 game.spawnPedestrians(100);
 game.startSpawningRandomEvents(30e3);
