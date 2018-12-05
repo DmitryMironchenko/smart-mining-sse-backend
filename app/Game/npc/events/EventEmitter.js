@@ -44,10 +44,9 @@ class EventEmitter {
     const randomType = types[Math.floor((types.length) * Math.random())];
     // console.log('[INFO] _spawnRandomEvent', randomType);
 
-    this.spawnEvent(randomType);
-
     setTimeout(() => {
-      this._spawnRandomEventInfinitely(minInterval, maxInterval);
+      // this._spawnRandomEventInfinitely(minInterval, maxInterval);
+      this.spawnEvent(randomType);
     }, minInterval + Math.round(Math.random() * (maxInterval - minInterval)));
   }
 
