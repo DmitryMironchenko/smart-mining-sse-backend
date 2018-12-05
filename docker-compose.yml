@@ -6,6 +6,4 @@ services:
     build: .
     image: smart-mining-sse-backend
     ports:
-      - 3000:3001
-    volumes:
-      - ./app:/app
+      - 8000:3001
