@@ -2,7 +2,7 @@ import _ from 'lodash';
 import uuid from 'uuid/v4';
 import game from '../../game';
 import Car from '../cars/car';
-import Pedestrian from '../pedestrians/Pedestrian';
+import Pedestrian from '../pedestrians/pedestrian';
 import Excavator from '../cars/excavator';
 
 class DriverBloodPressureLowered {
