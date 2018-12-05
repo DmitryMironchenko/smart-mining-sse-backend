@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+
+  node:
+    build: .
+    image: smart-mining-sse-backend
+    ports:
+      - 8000:3001
